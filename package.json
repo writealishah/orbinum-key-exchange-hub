@@ -10,7 +10,6 @@
     "postinstall": "prisma generate"
   },
   "dependencies": {
-    "@next/swc-win32-x64-msvc": "^16.2.11",
     "@prisma/client": "^5.21.1",
     "clsx": "^2.1.1",
     "framer-motion": "^11.11.10",
