@@ -1,0 +1,74 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
+
+:root {
+  --background: #07080c;
+  --foreground: #eceef2;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+/* Pixel Grid Background */
+.pixel-grid {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px);
+  background-size: 16px 16px;
+}
+
+/* Scanline / CRT Subtle Overlay */
+.scanline-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: linear-gradient(
+    rgba(18, 16, 16, 0) 50%, 
+    rgba(0, 0, 0, 0.15) 50%
+  );
+  background-size: 100% 4px;
+  z-index: 99;
+  pointer-events: none;
+  opacity: 0.25;
+}
+
+/* Tactile Pixel Shadow Utility Classes */
+.pixel-shadow-cyan {
+  box-shadow: 4px 4px 0px 0px rgba(6, 182, 212, 0.3);
+}
+
+.pixel-shadow-violet {
+  box-shadow: 4px 4px 0px 0px rgba(139, 92, 246, 0.3);
+}
+
+.pixel-shadow-box {
+  box-shadow: 4px 4px 0px 0px rgba(255, 255, 255, 0.08);
+}
+
+/* Monospace font utility */
+.font-mono-code {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* Custom crisp scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #07080c;
+}
+::-webkit-scrollbar-thumb {
+  background: #1e2230;
+  border-radius: 2px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #06b6d4;
+}

@@ -1,0 +1,82 @@
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
+
+async function main() {
+  console.log('Clearing existing pool and seeding 10 REAL Orbinum ZK Disclosure Keys...');
+
+  // Delete old keys and rate limits
+  await prisma.disclosureKey.deleteMany();
+  await prisma.rateLimit.deleteMany();
+
+  const realKeys = [
+    {
+      owner_address: '0x1010101010101010101010101010101010101010',
+      disclosure_key: 'orbdisc:eyJ2IjoxLCJjIjoiMHg5YzcyNzRhNTkwY2M3NjI1YTdhMDRhZGI3NzgwMTFlMmRjMzVlOWRhMDZkNTlmZDliOTI4NDUxZDY0Y2RjMjUiLCJ2YWwiOiIweGUwNDNkYTYxNzI1MDAwMCIsImFpZCI6IjB4MCIsIm9wayI6IjB4NDEwMjFkNjNkYjIxN2EzYzA4YzA1MDMyMTUyZDlmNzQ3NGM1YmFjZjEyYjhlMDYxNjQyNWI1NGMxNGUyMDU4IiwiYmxkIjoiMHhmZjQ3MzY5MjRlYjRiZWY5OTg4YWNiYjU0ZjM0YTliZTkxOGQ3MDhjZTVkNjVjODExODc5MTI1YjY5NzQzMzQifQ',
+      status: 'AVAILABLE',
+    },
+    {
+      owner_address: '0x2020202020202020202020202020202020202020',
+      disclosure_key: 'orbdisc:eyJ2IjoxLCJjIjoiMHgxODVlYzU1YmM1YWYxMWI5OTllMDE4OGM0MmRlMDU2MWQ3NjhhYWFkM2QzODRjNTkyM2IzZGM2NzMxYjI4MDVmIiwidmFsIjoiMHhlMjdjNDk4ODZlNjAwMDAiLCJhaWQiOiIweDAiLCJvcGsiOiIweDQxMDIxZDYzZGIyMTdhM2MwOGMwNTAzMjE1MmQ5Zjc0NzRjNWJhY2YxMmI4ZTA2MTY0MjViNTRjMTRlMjA1OCIsImJsZCI6IjB4MjkyOGVhYWQ2ZGYzNTFhMzZiNTcxZTVmNjA1ZTczMzMxMzgyMDUyMDM4ZGU0NDIwOTM2MDEwMTQ5NDRjMGUwIn0',
+      status: 'AVAILABLE',
+    },
+    {
+      owner_address: '0x3030303030303030303030303030303030303030',
+      disclosure_key: 'orbdisc:eyJ2IjoxLCJjIjoiMHgxYzdjYzdlMzJjM2IzMjc2NWE5NTg0ODYwNDQ4OWU4ZmI4YzZhYTVlOGI2ZGNjZGI4OTgyZTQzMWJlMzkwOTUwIiwidmFsIjoiMHhlNGI0YjhhZjZhNzAwMDAiLCJhaWQiOiIweDAiLCJvcGsiOiIweDQxMDIxZDYzZGIyMTdhM2MwOGMwNTAzMjE1MmQ5Zjc0NzRjNWJhY2YxMmI4ZTA2MTY0MjViNTRjMTRlMjA1OCIsImJsZCI6IjB4Yzk2YTYzYzJiMmQ4NzkxNjZhMjZhOGE0NjA5OTZlY2EwYjdiMGQ3ZDNlMGVhYzkxN2ExYjk1NTAwNTY4OTAwIn0',
+      status: 'AVAILABLE',
+    },
+    {
+      owner_address: '0x4040404040404040404040404040404040404040',
+      disclosure_key: 'orbdisc:eyJ2IjoxLCJjIjoiMHg5MmU3MGQwZTlhMmMwNTE3NWE1ZWRkMWE2YmE1NTgxYTQzYmEwOGI3Y2VlYTljODk4ZGE0ZWNjY2ZhN2Q3ZjMiLCJ2YWwiOiIweGU2ZWQyN2Q2NjY4MDAwMCIsImFpZCI6IjB4MCIsIm9wayI6IjB4NDEwMjFkNjNkYjIxN2EzYzA4YzA1MDMyMTUyZDlmNzQ3NGM1YmFjZjEyYjhlMDYxNjQyNWI1NGMxNGUyMDU4IiwiYmxkIjoiMHgxODAyODUzZDRhMTc5MmMzNjFmYzU1NmIxNTA1ZGVmNTQxNWMzZjgzNjI3NTkyODBlOGVjYThjMjQ5ODkzOTk2In0',
+      status: 'AVAILABLE',
+    },
+    {
+      owner_address: '0x5050505050505050505050505050505050505050',
+      disclosure_key: 'orbdisc:eyJ2IjoxLCJjIjoiMHgxODczNjQ5YzZmMmIxYTVlNTAxNmY5NzQ2OTAzNDg4ODBhZjUyMGI2MThmM2ZlYWIxZDhiMjk4NDg3N2I3Mzc4IiwidmFsIjoiMHhlOTI1OTZmZDYyOTAwMDAiLCJhaWQiOiIweDAiLCJvcGsiOiIweDQxMDIxZDYzZGIyMTdhM2MwOGMwNTAzMjE1MmQ5Zjc0NzRjNWJhY2YxMmI4ZTA2MTY0MjViNTRjMTRlMjA1OCIsImJsZCI6IjB4ODA4OWE2OTYyM2YzY2RiMzNlNzhiMjVjOWFhY2VhZjU3MzQxMjkzNjQ4ODZmZWE4YWVhMjFkYzZlZTcxN2QyIn0',
+      status: 'AVAILABLE',
+    },
+    {
+      owner_address: '0x6060606060606060606060606060606060606060',
+      disclosure_key: 'orbdisc:eyJ2IjoxLCJjIjoiMHhkZjUyMTkxYjVkNWQ1MTViOWUxN2IyZWQ1MTE0NTlkY2EyZTdkNGJhNWE4ODU4MjQ1NTEzOTcyMzAwMmI4MGUiLCJ2YWwiOiIweGViNWUwNjI0NWVhMDAwMCIsImFpZCI6IjB4MCIsIm9wayI6IjB4NDEwMjFkNjNkYjIxN2EzYzA4YzA1MDMyMTUyZDlmNzQ3NGM1YmFjZjEyYjhlMDYxNjQyNWI1NGMxNGUyMDU4IiwiYmxkIjoiMHgyODViNDhhZTVlNDgwNzBjNTVkYzQyNmIzOTYzZGYyNmFiNWRlNTAxMmQ2NTJlMzVkNmRmNmIzNWQ1OGQxNjU1In0',
+      status: 'AVAILABLE',
+    },
+    {
+      owner_address: '0x7070707070707070707070707070707070707070',
+      disclosure_key: 'orbdisc:eyJ2IjoxLCJjIjoiMHhhYThiMTE0MjM4NWY4MzVmYjcwYzJlYzFlMjc0OWI0YjhhMWNmNGFkNjBkYjdlMDc5Y2IyZTlkZmJjOWUwMWYiLCJ2YWwiOiIweGVkOTY3NTRiNWFiMDAwMCIsImFpZCI6IjB4MCIsIm9wayI6IjB4NDEwMjFkNjNkYjIxN2EzYzA4YzA1MDMyMTUyZDlmNzQ3NGM1YmFjZjEyYjhlMDYxNjQyNWI1NGMxNGUyMDU4IiwiYmxkIjoiMHg5NjAwNTI2YWM4ZjA4OGQ3NDU2NmQyNGI2Y2U1YjE5M2U3Zjc1MjQwYzJiNzYyZTI5MjRhNDFkYzVmOWE0NGEifQ',
+      status: 'AVAILABLE',
+    },
+    {
+      owner_address: '0x8080808080808080808080808080808080808080',
+      disclosure_key: 'orbdisc:eyJ2IjoxLCJjIjoiMHgxYTViYjAxNWQzNzg5Y2IxZWZjZjA3NjFiYzdlMTUxMDEwNDhhZjExZmNjOWJlYWQwMWY5YmE2ZGYzZDUwYzliIiwidmFsIjoiMHhlZmNlZTQ3MjU2YzAwMDAiLCJhaWQiOiIweDAiLCJvcGsiOiIweDQxMDIxZDYzZGIyMTdhM2MwOGMwNTAzMjE1MmQ5Zjc0NzRjNWJhY2YxMmI4ZTA2MTY0MjViNTRjMTRlMjA1OCIsImJsZCI6IjB4Mjc4MWMwNzA1YWUwNGQ2MTYyY2ZiYTAyY2M2YjkyYmQzNGU4NWY3YzM4ZmUyMDU3NmRjZDNiMWY6NjBkZDI3MiJ9',
+      status: 'AVAILABLE',
+    },
+    {
+      owner_address: '0x9090909090909090909090909090909090909090',
+      disclosure_key: 'orbdisc:eyJ2IjoxLCJjIjoiMHgyMjUxMGJiNjk5ZTE1YTcwZTdlZTE1OWZkNDlhOGM3MTNiMTM3ZGI2ZGE4YTMwNzg0YTRhYmRmZmJjOTZkZjM2IiwidmFsIjoiMHhmMjA3NTM5OTUyZDAwMDAiLCJhaWQiOiIweDAiLCJvcGsiOiIweDQxMDIxZDYzZGIyMTdhM2MwOGMwNTAzMjE1MmQ5Zjc0NzRjNWJhY2YxMmI4ZTA2MTY0MjViNTRjMTRlMjA1OCIsImJsZCI6IjB4MjkyOTllZmQ0OWI5YmU4ODM5Y2Y4MmU5MDI1MDljMGVjMWY2ZGNmMzk2NmNlNDAzNmQzYjRlNTQ5ODFmMDRjMyJ9',
+      status: 'AVAILABLE',
+    },
+    {
+      owner_address: '0xa0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0a0',
+      disclosure_key: 'orbdisc:eyJ2IjoxLCJjIjoiMHgyMzY0OTgwZGQyYTlkNTBkZjI5NmI4ODcwMTQzNGM4ODAzY2ZkZjhkMGFlYjQ0NjlmOTA3ODJhOTdhNzEzZDQ1IiwidmFsIjoiMHhmNDc4OWFhYTliNDgwMDAiLCJhaWQiOiIweDAiLCJvcGsiOiIweDQxMDIxZDYzZGIyMTdhM2MwOGMwNTAzMjE1MmQ5Zjc0NzRjNWJhY2YxMmI4ZTA2MTY0MjViNTRjMTRlMjA1OCIsImJsZCI6IjB4MjYwNWNkZjhlZjc4ODBmNTQ3N2ZjYWU0OGEwYzM4ZWZjNWI3NzI3NWI1ODVmMjExMWQzZDNhNDdmZTA0NWE0YiJ9',
+      status: 'AVAILABLE',
+    },
+  ];
+
+  for (const keyData of realKeys) {
+    await prisma.disclosureKey.create({
+      data: keyData,
+    });
+    console.log(`Successfully inserted real key: ${keyData.disclosure_key.slice(0, 30)}...`);
+  }
+
+  console.log('✅ Pool reset complete with 10 REAL Orbinum Disclosure Keys!');
+}
+
+main()
+  .catch((e) => {
+    console.error(e);
+    process.exit(1);
+  })
+  .finally(async () => {
+    await prisma.$disconnect();
+  });
