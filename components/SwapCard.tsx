@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Terminal, ArrowRight, Copy, Check, ExternalLink, AlertTriangle, ShieldCheck, RefreshCw, Lock } from 'lucide-react';
+import { Terminal, ArrowRight, Copy, Check, ExternalLink, AlertTriangle, ShieldCheck, RefreshCw, HelpCircle, User } from 'lucide-react';
 import { submitAndFetchKey, SwapResult } from '@/actions/keySwap';
 
 interface SwapCardProps {
@@ -11,6 +11,7 @@ interface SwapCardProps {
 
 export function SwapCard({ address, onSwapCompleted }: SwapCardProps) {
   const [inputKey, setInputKey] = useState('');
+  const [manualAddrInput, setManualAddrInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [swapResult, setSwapResult] = useState<SwapResult | null>(null);
   const [copied, setCopied] = useState(false);
@@ -23,10 +24,12 @@ export function SwapCard({ address, onSwapCompleted }: SwapCardProps) {
       trimmedKey.includes('disclosure') ||
       trimmedKey.length > 20);
 
+  const effectiveAddress = address || (manualAddrInput.trim().toLowerCase().startsWith('0x') && manualAddrInput.trim().length === 42 ? manualAddrInput.trim().toLowerCase() : null);
+
   const handleSwap = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!address) {
-      setErrorMsg('Wallet not connected. Connect MetaMask to continue.');
+    if (!effectiveAddress) {
+      setErrorMsg('Please enter a valid EVM address (0x...) below.');
       return;
     }
     if (!trimmedKey) {
@@ -39,7 +42,7 @@ export function SwapCard({ address, onSwapCompleted }: SwapCardProps) {
     setSwapResult(null);
 
     try {
-      const res = await submitAndFetchKey(address, trimmedKey);
+      const res = await submitAndFetchKey(effectiveAddress, trimmedKey);
       if (res.success) {
         setSwapResult(res);
         setInputKey('');
@@ -86,6 +89,35 @@ export function SwapCard({ address, onSwapCompleted }: SwapCardProps) {
             Deposit 1 valid ZK Disclosure Key (<code className="text-violet-300">orbdisc:...</code>) to retrieve 1 community key. Self-swaps strictly disabled.
           </p>
         </div>
+
+        {/* EVM Address Box if not saved */}
+        {!address && (
+          <div className="mb-6 p-4 bg-violet-950/20 border-2 border-violet-500/40 font-mono">
+            <div className="flex items-center justify-between mb-2">
+              <label className="text-xs font-bold text-violet-300 flex items-center gap-1.5">
+                <User className="w-3.5 h-3.5 text-violet-400" />
+                YOUR EVM WALLET ADDRESS:
+              </label>
+            </div>
+            <input
+              type="text"
+              value={manualAddrInput}
+              onChange={(e) => {
+                setManualAddrInput(e.target.value);
+                if (errorMsg) setErrorMsg(null);
+              }}
+              placeholder="Paste your 0x... EVM address"
+              className="w-full px-3 py-2 bg-black border border-white/20 text-cyan-300 text-xs font-mono placeholder:text-gray-600 focus:outline-none focus:border-cyan-400"
+            />
+            {/* Why EVM Address Needed Note */}
+            <div className="mt-2 flex items-start gap-1.5 text-[10px] font-sans text-gray-400">
+              <HelpCircle className="w-3.5 h-3.5 text-cyan-400 shrink-0 mt-0.5" />
+              <span>
+                <strong className="text-gray-300">Why is this needed?</strong> Your address ensures you never get back your own key and protects against spam. No wallet signature or gas required!
+              </span>
+            </div>
+          </div>
+        )}
 
         {/* Form Input */}
         <form onSubmit={handleSwap} className="space-y-5">
@@ -140,10 +172,10 @@ export function SwapCard({ address, onSwapCompleted }: SwapCardProps) {
             </div>
           )}
 
-          {/* Submit Tactile Action Button */}
+          {/* Submit Action Button */}
           <button
             type="submit"
-            disabled={!address || !isValidFormat || isLoading}
+            disabled={!effectiveAddress || !isValidFormat || isLoading}
             className="w-full py-4 px-6 font-mono font-bold text-sm text-black bg-cyan-400 hover:bg-cyan-300 active:translate-y-1 transition-all border-2 border-black pixel-shadow-cyan disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-cyan-400"
           >
             <div className="flex items-center justify-center gap-2">
@@ -152,8 +184,8 @@ export function SwapCard({ address, onSwapCompleted }: SwapCardProps) {
                   <RefreshCw className="w-4 h-4 animate-spin text-black" />
                   <span>[EXECUTING ATOMIC SWAP...]</span>
                 </>
-              ) : !address ? (
-                <span>[CONNECT WALLET TO SWAP]</span>
+              ) : !effectiveAddress ? (
+                <span>[ENTER EVM ADDRESS TO SWAP]</span>
               ) : (
                 <>
                   <span>[EXECUTE KEY SWAP]</span>

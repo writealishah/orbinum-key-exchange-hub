@@ -1,8 +1,8 @@
 'use client';
 
 import React from 'react';
-import { WalletConnect } from './WalletConnect';
-import { Shield, Terminal, Cpu } from 'lucide-react';
+import { AddressInput } from './AddressInput';
+import { Terminal } from 'lucide-react';
 
 interface NavbarProps {
   address: string | null;
@@ -20,7 +20,7 @@ export function Navbar({ address, onAddressChange }: NavbarProps) {
             [SYS_STATUS: ONLINE]
           </span>
           <span>ORBINUM_CHAIN_ID: 2700</span>
-          <span>ZK_VERIFIER: ACTIVE</span>
+          <span>ZK_ENGINE: ACTIVE</span>
         </div>
         <div className="flex items-center gap-3 text-gray-500">
           <span>FAIR_EXCHANGE: 1-FOR-1</span>
@@ -49,8 +49,8 @@ export function Navbar({ address, onAddressChange }: NavbarProps) {
           </div>
         </div>
 
-        {/* Right Section: Wallet Connect */}
-        <WalletConnect address={address} onAddressChange={onAddressChange} />
+        {/* Right Section: Address Input */}
+        <AddressInput address={address} onAddressChange={onAddressChange} />
       </div>
     </header>
   );
